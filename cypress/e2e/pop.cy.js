@@ -9,9 +9,9 @@ const HomePage = new Home();
 describe("Login on website LMS", () => {
   it("Login with custom method", () => {
     LoginPage.navigate();
-    LoginPage.validateInputs();
-    LoginPage.validateLoginButton();
-    HomePage.validateMenuButton();
-    HomePage.validateLogoutButton();
+    LoginPage.fillLoginForm();
+    LoginPage.clickLoginButton();
+    HomePage.clickMenuButton();
+    HomePage.clickLogoutButton();
   });
 });

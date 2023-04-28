@@ -1,0 +1,42 @@
+config:
+  target: "http://httpbin.org/"
+  environments:
+    phases:
+      - duration: 1800
+        arrivalRate: 2
+        name: Load test
+  plugins:
+    ensure: {}
+  ensure:
+    thresholds:
+      - http.response_time.p95: 900
+      - http.response_time.p99: 1000
+    conditions:
+      - expression: vusers.failed == 0 and vusers.session_length.median >= 800
+      - expression: http.request_rate >= 2
+      - expression: http.response_time.max < 600
+scenarios:
+  - name: Getting a responce
+    flow:
+      - get:
+          url: "{{ target }}get"
+      - post:
+          url: "{{ target }}post"
+          json:
+            username: "Jan Kowalski"
+            password: "Janek123"
+          capture:
+            - json: "$.json"
+              as: "request_body"
+            - json: "$.headers.Host"
+              as: "host"
+            - json: "$.url"
+              as: "url"
+            - json: "$.origin"
+              as: "origin"
+      - log: "Json value from response is: {{request_body}}"
+      - log: "Username value from response is: {{request_body.username}}"
+      - log: "Password value from response is: {{request_body.password}}"
+      - log: "Host value from response is: {{host}}"
+      - log: "Url value from response is: {{url}}"
+      - log: "Origin value from response is: {{origin}}"
